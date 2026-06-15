@@ -1,223 +1,239 @@
 # RevLoop
 
-AI-powered revenue and retention cockpit for early-stage startups.
+**AI-powered product analytics cockpit for early-stage startups.**
+
+RevLoop turns product event data into practical answers for founders, product
+managers, and growth teams. It highlights funnel drop-offs, visualizes retention
+cohorts, compares acquisition channel performance, surfaces churn risk, and
+recommends where the team should investigate or experiment next.
+
+![RevLoop Dashboard](docs/screenshots/dashboard.png)
+
+| Funnel Analysis | Retention Cohorts |
+|---|---|
+| ![RevLoop Funnel](docs/screenshots/funnel.png) | ![RevLoop Retention](docs/screenshots/retention.png) |
+
+| Channel Performance | Churn Risk |
+|---|---|
+| ![RevLoop Channels](docs/screenshots/channels.png) | ![RevLoop Churn Risk](docs/screenshots/churn-risk.png) |
+
+## Why I Built This
+
+I built RevLoop to connect engineering with product and business
+decision-making. Most student projects stop once the features work; RevLoop
+focuses on what happens after a product launches: where users drop off, which
+channels retain valuable users, who may churn, and what the team should test
+next.
+
+The project demonstrates how a full-stack system can turn raw behavioral data
+into a focused operating view for a startup team.
+
+## Core Features
+
+- Product health dashboard with activation, retention, growth, and acquisition metrics
+- Multi-step funnel analysis with conversion and drop-off rates
+- Weekly retention cohort heatmap
+- Channel performance, CAC, revenue, ROI, and quality scoring
+- Rule-based churn risk scoring with suggested actions
+- Weekly risks, opportunities, and experiment recommendations
+- Realistic seeded startup dataset with anonymous and identified activity
+- FastAPI analytics backend backed by PostgreSQL
+- Premium responsive Next.js dashboard UI
 
 ## Tech Stack
 
-| Layer | Tech |
+| Area | Technologies |
 |---|---|
-| Frontend | Next.js 14 · TypeScript · Tailwind CSS · Framer Motion · Recharts |
-| Backend | FastAPI · SQLAlchemy · Pydantic |
-| Database | PostgreSQL (Supabase) |
-| ML | Python · Scikit-learn |
-| Deploy | Vercel (frontend) · Railway (backend) · Supabase (DB) |
+| Frontend | Next.js, TypeScript, Tailwind CSS, Recharts, Framer Motion, lucide-react |
+| Backend | FastAPI, SQLAlchemy, PostgreSQL, Pydantic |
+| Data | Python seed generator, PostgreSQL, generated CSV and SQL seed data |
+| ML / Future | Scikit-learn planned for the later churn-model phase |
 
-## Folder Structure
+## Architecture
 
-```
-revloop/
-├── frontend/
-│   ├── app/            # Next.js App Router pages
-│   ├── components/     # Cards, charts, tables, layout, and UI primitives
-│   └── lib/            # Typed API client, response types, utilities
-├── backend/
-│   ├── app/
-│   │   ├── main.py
-│   │   ├── routes/     # FastAPI routers
-│   │   ├── services/   # Business logic
-│   │   └── models/     # SQLAlchemy models
-│   ├── ml/             # Churn model training + inference
-│   ├── scripts/
-│   │   ├── seed_data.py
-│   │   └── generated_data/   # CSVs + seed.sql (git-ignored)
-│   └── schema.sql
-└── docs/
-    ├── product-brief.md
-    └── event-taxonomy.md
+```text
+Next.js Frontend
+       ↓
+FastAPI Backend
+       ↓
+PostgreSQL Database
+       ↑
+Python Seed Generator
 ```
 
-## Current Build Stage
+- The frontend calls typed API functions and renders responsive analytical views.
+- The backend calculates funnel, retention, channel, churn-risk, and summary metrics.
+- PostgreSQL stores organizations, users, events, campaigns, revenue events, experiments, and insights.
+- The deterministic seed generator creates the realistic **Campus Connect Demo** dataset.
 
-**Step 3 of 10 — Next.js dashboard UI**
+## Demo Dataset
 
-- [x] Folder structure
-- [x] `backend/schema.sql` — PostgreSQL schema (7 tables)
-- [x] `backend/scripts/seed_data.py` — deterministic demo data generator
-- [x] `docs/product-brief.md`
-- [x] `docs/event-taxonomy.md`
-- [x] FastAPI backend (Step 2)
-- [x] Next.js dashboard UI (Step 3)
-- [ ] Funnel analysis page (Step 4)
-- [ ] Retention cohorts page (Step 5)
-- [ ] Channel performance page (Step 6)
-- [ ] Churn risk ML model (Step 7)
-- [ ] AI insights engine (Step 8)
-- [ ] Experiment tracker (Step 9)
-- [ ] Deploy (Step 10)
+| Metric | Value |
+|---|---:|
+| Organization | Campus Connect Demo |
+| Visitors | 2,500 |
+| Signed-up users | 800 |
+| Activated users | 420 |
+| Retained users | 210 |
+| Paid users | 75 |
+| Product events | 20,478 |
+| Activity window | 8 weeks |
 
-## Running the Seed Script
+The dataset models six acquisition channels with intentionally different
+behavior:
 
-**Requirements:** Python 3.10+, no external dependencies (stdlib only).
+`Instagram` · `WhatsApp` · `Referral` · `LinkedIn` · `Organic` · `Paid Ads`
 
-```bash
-cd revloop
-python backend/scripts/seed_data.py
-```
-
-Output lands in `backend/scripts/generated_data/`:
-
-| File | Contents |
-|---|---|
-| `organizations.csv` | 1 org row |
-| `users.csv` | 800 signed-up users |
-| `events.csv` | ~20 000 product events |
-| `campaigns.csv` | 6 channel campaigns |
-| `revenue_events.csv` | 75 payment records |
-| `experiments.csv` | 5 A/B tests |
-| `insights.csv` | 6 AI insight rows |
-| `seed.sql` | All of the above as INSERT statements |
-
-To load into PostgreSQL:
-
-```bash
-psql $DATABASE_URL -f backend/schema.sql
-psql $DATABASE_URL -f backend/scripts/generated_data/seed.sql
-```
-
-Both files are rerunnable: the schema drops tables in reverse dependency
-order, and `seed.sql` truncates demo tables before inserting deterministic data.
-
----
-
-## Running the FastAPI Backend
-
-### 1. Create `backend/.env`
-
-Create this file manually (never commit it):
-
-```
-DATABASE_URL=postgresql+psycopg2://your_user:your_password@localhost:5432/revloop
-ENV=development
-```
-
-### 2. Install Python dependencies
-
-```bash
-cd revloop/backend
-pip install -r requirements.txt
-```
-
-### 3. Start the server
-
-```bash
-cd revloop/backend
-python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
-```
-
----
+Referral produces the strongest activation and retention, Instagram brings
+high volume with weaker retention, and Paid Ads combines higher spend with the
+weakest retention.
 
 ## API Endpoints
 
-Base URL: `http://127.0.0.1:8000`
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | `/health` | API and database health check |
+| GET | `/api/dashboard/summary` | Product health summary |
+| GET | `/api/funnel` | Funnel conversion and drop-off metrics |
+| GET | `/api/retention` | Weekly retention cohorts |
+| GET | `/api/channels/performance` | Channel quality and economics |
+| GET | `/api/churn-risk` | Rule-based user churn-risk ranking |
+| GET | `/api/insights/weekly-summary` | Risks, opportunities, and experiment ideas |
 
-All endpoints accept `?org_id=1` (defaults to 1).
+FastAPI's interactive documentation is available locally at
+<http://127.0.0.1:8000/docs>.
 
-| Method | URL | Description |
-|--------|-----|-------------|
-| GET | `/health` | Database connectivity check |
-| GET | `/api/dashboard/summary` | Key metrics: users, activation, retention, growth, best channel, worst funnel step |
-| GET | `/api/funnel` | 6-step conversion funnel with per-step drop-off rates |
-| GET | `/api/retention` | Weekly retention cohort table (week 0–4) |
-| GET | `/api/channels/performance` | Per-channel CAC, ROI, activation, retention, quality score |
-| GET | `/api/churn-risk` | Rule-based churn risk list sorted by risk score (`?limit=50`) |
-| GET | `/api/insights/weekly-summary` | AI-style weekly summary with risks, opportunities, and experiment ideas |
+## Local Setup
 
-### Example test URLs
+### Prerequisites
 
+- Python 3.10 or newer
+- Node.js and npm
+- PostgreSQL
+- PostgreSQL command-line tools (`psql`)
+
+### 1. Database
+
+From the repository root, create the local database:
+
+```powershell
+createdb -U postgres revloop
 ```
-http://127.0.0.1:8000/health
-http://127.0.0.1:8000/api/dashboard/summary?org_id=1
-http://127.0.0.1:8000/api/funnel?org_id=1
-http://127.0.0.1:8000/api/retention?org_id=1
-http://127.0.0.1:8000/api/channels/performance?org_id=1
-http://127.0.0.1:8000/api/churn-risk?org_id=1&limit=50
-http://127.0.0.1:8000/api/insights/weekly-summary?org_id=1
+
+Load the schema and generated demo data:
+
+```powershell
+psql -U postgres -d revloop -f backend/schema.sql
+psql -U postgres -d revloop -f backend/scripts/generated_data/seed.sql
 ```
 
-Interactive docs: `http://127.0.0.1:8000/docs`
+The schema and seed SQL are rerunnable. The schema recreates tables in safe
+dependency order, and the seed SQL resets the demo tables before inserting
+data.
 
----
+To regenerate the deterministic CSV and SQL seed files:
 
-## Running the Frontend
+```powershell
+cd backend
+python scripts/seed_data.py
+cd ..
+```
 
-The dashboard is a **Next.js 14 (App Router)** app in `frontend/`, written in
-TypeScript, styled with **Tailwind CSS**, animated with **Framer Motion**, and
-charted with **Recharts**. It is a dark "mission control" cockpit that reads
-live data from the FastAPI backend.
+### 2. Backend
 
-### 1. Install dependencies (first time only)
+Create and activate a virtual environment:
 
-```bash
-cd revloop/frontend
+```powershell
+cd backend
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+Create `backend/.env`:
+
+```env
+DATABASE_URL=postgresql+psycopg2://postgres:YOUR_PASSWORD@localhost:5432/revloop
+ENV=development
+```
+
+Start FastAPI:
+
+```powershell
+python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+### 3. Frontend
+
+Open a second PowerShell terminal:
+
+```powershell
+cd frontend
+Copy-Item .env.example .env.local
 npm install
+npm run dev
 ```
 
-### 2. Configure the API base URL
+The frontend environment should contain:
 
-Create a local env file from the tracked example:
-
-```bash
-cp .env.example .env.local
-```
-
-The expected value is:
-
-```
+```env
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
-Change it only if the backend runs elsewhere.
+Open <http://localhost:3000>. The root route redirects to the dashboard.
 
-### 3. Start the dev server
+> Local `.env` and `.env.local` files may contain machine-specific
+> configuration and should never be committed. Commit only the provided
+> `.env.example` files.
 
-```bash
-cd revloop/frontend
-npm run dev
-```
+## Screenshots
 
-Open <http://localhost:3000> — it redirects to `/dashboard`.
+### Dashboard
 
-> The browser fetches data directly from the backend, so the backend **must be
-> running on port 8000** (CORS is open in development).
+![Dashboard](docs/screenshots/dashboard.png)
 
-### Pages
+### Funnel Analysis
 
-| Route | What it shows |
-|---|---|
-| `/dashboard` | Hero cockpit: 6 breathing metric cards, growth-trend area chart, churn-risk donut, top insights, critical-alert callout |
-| `/funnel` | Animated visual funnel (bars narrow as users drop off) + step breakdown table |
-| `/retention` | Weekly cohort retention heatmap with color-coded cells |
-| `/channels` | Activation-vs-retention grouped bar chart + channel economics table (CAC, ROI, quality score) |
-| `/churn` | High/Medium/Low risk stat cards, distribution donut, at-risk users table |
-| `/insights` | AI weekly summary hero + Risks / Opportunities / Experiments columns |
+![Funnel](docs/screenshots/funnel.png)
 
-### Run backend + frontend together
+### Retention Cohorts
 
-Two terminals:
+![Retention](docs/screenshots/retention.png)
 
-```bash
-# Terminal 1 — backend  → http://localhost:8000
-cd revloop/backend
-python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+### Channel Performance
 
-# Terminal 2 — frontend → http://localhost:3000
-cd revloop/frontend
-npm run dev
-```
+![Channels](docs/screenshots/channels.png)
 
-### Production build
+### Churn Risk
 
-```bash
-cd revloop/frontend
-npm run build && npm start
-```
+![Churn Risk](docs/screenshots/churn-risk.png)
+
+### Insights
+
+![Insights](docs/screenshots/insights.png)
+
+## Project Status
+
+### Current
+
+- PostgreSQL schema and realistic seed dataset complete
+- FastAPI analytics backend complete
+- Next.js dashboard frontend complete
+- Local end-to-end development workflow working
+
+### Next
+
+- Scikit-learn churn model
+- Experiment tracker
+- Production deployment
+- Public demo video
+- Portfolio case study
+
+## What This Project Demonstrates
+
+- Full-stack engineering across data, API, and frontend layers
+- Product analytics and metric design
+- Funnel, retention, acquisition, and churn analysis
+- Data-driven product decision-making
+- Dashboard UI/UX and data visualization
+- Startup and business understanding beyond feature implementation
