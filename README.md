@@ -7,7 +7,7 @@ AI-powered revenue and retention cockpit for early-stage startups.
 | Layer | Tech |
 |---|---|
 | Frontend | Next.js 14 · TypeScript · Tailwind CSS · Shadcn UI · Recharts |
-| Backend | FastAPI · SQLAlchemy · Pandas |
+| Backend | FastAPI · SQLAlchemy · Pydantic |
 | Database | PostgreSQL (Supabase) |
 | ML | Python · Scikit-learn |
 | Deploy | Vercel (frontend) · Railway (backend) · Supabase (DB) |
@@ -39,14 +39,14 @@ revloop/
 
 ## Current Build Stage
 
-**Step 1 of 10 — Database schema + seed data**
+**Step 2 of 10 — FastAPI backend**
 
 - [x] Folder structure
 - [x] `backend/schema.sql` — PostgreSQL schema (7 tables)
 - [x] `backend/scripts/seed_data.py` — deterministic demo data generator
 - [x] `docs/product-brief.md`
 - [x] `docs/event-taxonomy.md`
-- [ ] FastAPI backend (Step 2)
+- [x] FastAPI backend (Step 2)
 - [ ] Next.js dashboard UI (Step 3)
 - [ ] Funnel analysis page (Step 4)
 - [ ] Retention cohorts page (Step 5)
@@ -87,3 +87,62 @@ psql $DATABASE_URL -f backend/scripts/generated_data/seed.sql
 
 Both files are rerunnable: the schema drops tables in reverse dependency
 order, and `seed.sql` truncates demo tables before inserting deterministic data.
+
+---
+
+## Running the FastAPI Backend
+
+### 1. Create `backend/.env`
+
+Create this file manually (never commit it):
+
+```
+DATABASE_URL=postgresql+psycopg2://your_user:your_password@localhost:5432/revloop
+ENV=development
+```
+
+### 2. Install Python dependencies
+
+```bash
+cd revloop/backend
+pip install -r requirements.txt
+```
+
+### 3. Start the server
+
+```bash
+cd revloop/backend
+python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+---
+
+## API Endpoints
+
+Base URL: `http://127.0.0.1:8000`
+
+All endpoints accept `?org_id=1` (defaults to 1).
+
+| Method | URL | Description |
+|--------|-----|-------------|
+| GET | `/health` | Database connectivity check |
+| GET | `/api/dashboard/summary` | Key metrics: users, activation, retention, growth, best channel, worst funnel step |
+| GET | `/api/funnel` | 6-step conversion funnel with per-step drop-off rates |
+| GET | `/api/retention` | Weekly retention cohort table (week 0–4) |
+| GET | `/api/channels/performance` | Per-channel CAC, ROI, activation, retention, quality score |
+| GET | `/api/churn-risk` | Rule-based churn risk list sorted by risk score (`?limit=50`) |
+| GET | `/api/insights/weekly-summary` | AI-style weekly summary with risks, opportunities, and experiment ideas |
+
+### Example test URLs
+
+```
+http://127.0.0.1:8000/health
+http://127.0.0.1:8000/api/dashboard/summary?org_id=1
+http://127.0.0.1:8000/api/funnel?org_id=1
+http://127.0.0.1:8000/api/retention?org_id=1
+http://127.0.0.1:8000/api/channels/performance?org_id=1
+http://127.0.0.1:8000/api/churn-risk?org_id=1&limit=50
+http://127.0.0.1:8000/api/insights/weekly-summary?org_id=1
+```
+
+Interactive docs: `http://127.0.0.1:8000/docs`
