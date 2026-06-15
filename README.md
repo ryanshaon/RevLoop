@@ -208,6 +208,10 @@ Open <http://localhost:3000>. The root route redirects to the dashboard.
 
 ![Churn Risk](docs/screenshots/churn-risk.png)
 
+### Experiment Tracker
+
+![Experiment Tracker](docs/screenshots/experiments.png)
+
 ### Insights
 
 ![Insights](docs/screenshots/insights.png)
