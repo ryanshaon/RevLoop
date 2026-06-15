@@ -1,0 +1,7 @@
+id,org_id,insight_type,insight_title,insight_text,severity,created_at
+1,1,churn_risk,High Churn Risk Detected in Instagram Cohort,"Instagram users have 17.1% later-week retention, below the 26.2% overall rate. Consider a targeted re-engagement sequence.",critical,2026-06-14T23:59:59+00:00
+2,1,channel_quality,Referral Channel Has Highest LTV,Referral users convert to paid at 13.3x the Paid Ads rate and show 45.8% later-week retention. Referral spend per signup is about $4.17.,info,2026-06-14T23:59:59+00:00
+3,1,funnel_drop,Signup to Onboarding Drop-off is 47.5%,Only 52.5% of users who complete signup reach onboarding_completed. Review the onboarding flow for avoidable friction.,warning,2026-06-14T23:59:59+00:00
+4,1,funnel_drop,Payment Started but Not Completed: 28.6% Abandonment,28.6% of users who fire payment_started do not reach payment_completed in the demo window. Test checkout reminders or clearer pricing.,warning,2026-06-14T23:59:59+00:00
+5,1,channel_quality,LinkedIn Volume is Low but Quality is High,LinkedIn represents 8% of signed-up users and 56.2% of them activate. Consider testing a modest spend increase.,info,2026-06-14T23:59:59+00:00
+6,1,churn_risk,Paid Ads Retention Trails Organic,Paid Ads later-week retention is 10.9% versus 28.3% for Organic. Review targeting criteria and landing-page fit.,critical,2026-06-14T23:59:59+00:00
