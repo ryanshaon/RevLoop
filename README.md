@@ -36,6 +36,8 @@ into a focused operating view for a startup team.
 - Channel performance, CAC, revenue, ROI, and quality scoring
 - Rule-based churn risk scoring with suggested actions
 - Weekly risks, opportunities, and experiment recommendations
+- Experiment Tracker with create, edit, status updates, soft cancel, and win-rate stats
+- Full CRUD experiment API
 - Realistic seeded startup dataset with anonymous and identified activity
 - FastAPI analytics backend backed by PostgreSQL
 - Premium responsive Next.js dashboard UI
@@ -223,12 +225,12 @@ Open <http://localhost:3000>. The root route redirects to the dashboard.
 - PostgreSQL schema and realistic seed dataset complete
 - FastAPI analytics backend complete
 - Next.js dashboard frontend complete
+- Experiment Tracker and full CRUD experiment API complete
 - Local end-to-end development workflow working
 
 ### Next
 
 - Scikit-learn churn model
-- Experiment tracker
 - Production deployment
 - Public demo video
 - Portfolio case study
