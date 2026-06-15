@@ -6,7 +6,7 @@ AI-powered revenue and retention cockpit for early-stage startups.
 
 | Layer | Tech |
 |---|---|
-| Frontend | Next.js 14 · TypeScript · Tailwind CSS · Shadcn UI · Recharts |
+| Frontend | Next.js 14 · TypeScript · Tailwind CSS · Framer Motion · Recharts |
 | Backend | FastAPI · SQLAlchemy · Pydantic |
 | Database | PostgreSQL (Supabase) |
 | ML | Python · Scikit-learn |
@@ -18,9 +18,8 @@ AI-powered revenue and retention cockpit for early-stage startups.
 revloop/
 ├── frontend/
 │   ├── app/            # Next.js App Router pages
-│   ├── components/     # Shared UI components
-│   ├── lib/            # API clients, utilities
-│   └── charts/         # Recharts wrappers
+│   ├── components/     # Cards, charts, tables, layout, and UI primitives
+│   └── lib/            # Typed API client, response types, utilities
 ├── backend/
 │   ├── app/
 │   │   ├── main.py
@@ -39,7 +38,7 @@ revloop/
 
 ## Current Build Stage
 
-**Step 2 of 10 — FastAPI backend**
+**Step 3 of 10 — Next.js dashboard UI**
 
 - [x] Folder structure
 - [x] `backend/schema.sql` — PostgreSQL schema (7 tables)
@@ -47,7 +46,7 @@ revloop/
 - [x] `docs/product-brief.md`
 - [x] `docs/event-taxonomy.md`
 - [x] FastAPI backend (Step 2)
-- [ ] Next.js dashboard UI (Step 3)
+- [x] Next.js dashboard UI (Step 3)
 - [ ] Funnel analysis page (Step 4)
 - [ ] Retention cohorts page (Step 5)
 - [ ] Channel performance page (Step 6)
@@ -146,3 +145,79 @@ http://127.0.0.1:8000/api/insights/weekly-summary?org_id=1
 ```
 
 Interactive docs: `http://127.0.0.1:8000/docs`
+
+---
+
+## Running the Frontend
+
+The dashboard is a **Next.js 14 (App Router)** app in `frontend/`, written in
+TypeScript, styled with **Tailwind CSS**, animated with **Framer Motion**, and
+charted with **Recharts**. It is a dark "mission control" cockpit that reads
+live data from the FastAPI backend.
+
+### 1. Install dependencies (first time only)
+
+```bash
+cd revloop/frontend
+npm install
+```
+
+### 2. Configure the API base URL
+
+Create a local env file from the tracked example:
+
+```bash
+cp .env.example .env.local
+```
+
+The expected value is:
+
+```
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+Change it only if the backend runs elsewhere.
+
+### 3. Start the dev server
+
+```bash
+cd revloop/frontend
+npm run dev
+```
+
+Open <http://localhost:3000> — it redirects to `/dashboard`.
+
+> The browser fetches data directly from the backend, so the backend **must be
+> running on port 8000** (CORS is open in development).
+
+### Pages
+
+| Route | What it shows |
+|---|---|
+| `/dashboard` | Hero cockpit: 6 breathing metric cards, growth-trend area chart, churn-risk donut, top insights, critical-alert callout |
+| `/funnel` | Animated visual funnel (bars narrow as users drop off) + step breakdown table |
+| `/retention` | Weekly cohort retention heatmap with color-coded cells |
+| `/channels` | Activation-vs-retention grouped bar chart + channel economics table (CAC, ROI, quality score) |
+| `/churn` | High/Medium/Low risk stat cards, distribution donut, at-risk users table |
+| `/insights` | AI weekly summary hero + Risks / Opportunities / Experiments columns |
+
+### Run backend + frontend together
+
+Two terminals:
+
+```bash
+# Terminal 1 — backend  → http://localhost:8000
+cd revloop/backend
+python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+
+# Terminal 2 — frontend → http://localhost:3000
+cd revloop/frontend
+npm run dev
+```
+
+### Production build
+
+```bash
+cd revloop/frontend
+npm run build && npm start
+```

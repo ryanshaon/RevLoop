@@ -1,0 +1,95 @@
+/**
+ * TypeScript interfaces mirroring the FastAPI backend response schemas exactly.
+ * Backend source of truth: revloop/backend/app/schemas/*.py
+ */
+
+export type RiskLevel = "high" | "medium" | "low";
+
+// GET /api/dashboard/summary
+export interface DashboardSummary {
+  total_users: number;
+  new_users_this_week: number;
+  activation_rate: number; // 0..1
+  retention_rate: number; // 0..1
+  churn_risk_average: number; // 0..1 (currently 0.0 — ML model arrives in Step 7)
+  best_channel: string;
+  worst_funnel_step: string;
+  weekly_growth_percent: number; // e.g. -21.88
+}
+
+// GET /api/funnel
+export interface FunnelStep {
+  step: string;
+  event: string;
+  users: number;
+  conversion_rate: number; // 0..1, relative to the previous step
+  drop_off_rate: number; // 0..1, relative to previous step
+}
+
+export interface FunnelResponse {
+  steps: FunnelStep[];
+}
+
+// GET /api/retention
+export interface CohortRow {
+  cohort_week: string; // e.g. "2026-03-02"
+  cohort_size: number;
+  week_0: number; // percentages 0..100
+  week_1: number;
+  week_2: number;
+  week_3: number;
+  week_4: number;
+}
+
+export interface RetentionResponse {
+  cohorts: CohortRow[];
+}
+
+// GET /api/channels/performance
+export interface ChannelPerformance {
+  channel: string;
+  visitors: number;
+  signups: number;
+  activated_users: number;
+  retained_users: number;
+  paid_users: number;
+  activation_rate: number; // 0..1
+  retention_rate: number; // 0..1
+  paid_conversion_rate: number; // 0..1
+  revenue: number;
+  spend: number;
+  cac: number;
+  roi: number;
+  channel_quality_score: number; // 0..1
+}
+
+export interface ChannelsResponse {
+  channels: ChannelPerformance[];
+}
+
+// GET /api/churn-risk
+export interface ChurnUser {
+  user_id: number;
+  external_user_id: string;
+  acquisition_channel: string;
+  signup_date: string;
+  last_active_at: string;
+  days_since_last_active: number;
+  total_events: number;
+  risk_score: number; // 0..1
+  risk_level: RiskLevel;
+  risk_reason: string;
+  suggested_action: string;
+}
+
+export interface ChurnResponse {
+  users: ChurnUser[];
+}
+
+// GET /api/insights/weekly-summary
+export interface InsightsSummary {
+  summary: string;
+  risks: string[];
+  opportunities: string[];
+  recommended_experiments: string[];
+}

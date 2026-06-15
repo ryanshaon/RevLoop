@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  height: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  background-color: #05070f;
+  color: #eef2ff;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Selection */
+::selection {
+  background: rgba(79, 110, 247, 0.32);
+  color: #eef2ff;
+}
+
+/* Custom scrollbar — keeps the mission-control aesthetic on overflow */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #05070f;
+}
+::-webkit-scrollbar-thumb {
+  background: #1c2035;
+  border-radius: 9999px;
+  border: 2px solid #05070f;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3d4fd6;
+}
+
+/* Thin scrollbars for inner scroll regions */
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #1c2035 transparent;
+}
+
+/* Signature page bloom — faint indigo glow at the top of the layout */
+.page-bloom {
+  background: radial-gradient(
+    ellipse 80% 50% at 50% -10%,
+    rgba(79, 110, 247, 0.07),
+    transparent
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
