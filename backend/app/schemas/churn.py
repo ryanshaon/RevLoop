@@ -1,4 +1,5 @@
-from typing import List
+from typing import List, Literal
+
 from pydantic import BaseModel
 
 
@@ -11,10 +12,11 @@ class ChurnUser(BaseModel):
     days_since_last_active: int
     total_events: int
     risk_score: float
-    risk_level: str
+    risk_level: Literal["high", "medium", "low"]
     risk_reason: str
     suggested_action: str
 
 
 class ChurnRiskResponse(BaseModel):
+    model_version: Literal["ml_v1", "rule_based"]
     users: List[ChurnUser]

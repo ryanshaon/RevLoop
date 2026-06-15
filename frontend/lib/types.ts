@@ -83,6 +83,7 @@ export interface ChurnUser {
 }
 
 export interface ChurnResponse {
+  model_version: "ml_v1" | "rule_based";
   users: ChurnUser[];
 }
 

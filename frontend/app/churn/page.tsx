@@ -26,7 +26,7 @@ export default function ChurnPage() {
         <PageHeading
           kicker="Retention Risk"
           title="Churn Risk"
-          description="Rule-based scoring of which users are slipping away — and the play to win them back."
+          description="ML churn risk scoring — identify which users are slipping away and the play to win them back."
         />
         <ChurnSkeleton />
       </div>
@@ -44,7 +44,7 @@ export default function ChurnPage() {
           <PageHeading
             kicker="Retention Risk"
             title="Churn Risk"
-            description="Rule-based scoring of which users are slipping away — and the play to win them back."
+            description="ML churn risk scoring — identify which users are slipping away and the play to win them back."
           />
         </Section>
         <Section>
@@ -68,11 +68,24 @@ export default function ChurnPage() {
   return (
     <PageContainer>
       <Section>
-        <PageHeading
-          kicker="Retention Risk"
-          title="Churn Risk"
-          description="Rule-based scoring of which users are slipping away — and the play to win them back."
-        />
+        <div className="flex flex-wrap items-start gap-3">
+          <div className="flex-1">
+            <PageHeading
+              kicker="Retention Risk"
+              title="Churn Risk"
+              description="ML churn risk scoring — identify which users are slipping away and the play to win them back."
+            />
+          </div>
+          <span
+            className={`mt-1 shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
+              data.model_version === "ml_v1"
+                ? "bg-indigo-500/20 text-indigo-300"
+                : "bg-amber-500/20 text-amber-300"
+            }`}
+          >
+            {data.model_version === "ml_v1" ? "ML v1" : "Rule-based fallback"}
+          </span>
+        </div>
       </Section>
 
       <Section className="grid grid-cols-1 gap-4 sm:grid-cols-3">

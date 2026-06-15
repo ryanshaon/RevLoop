@@ -34,7 +34,7 @@ into a focused operating view for a startup team.
 - Multi-step funnel analysis with conversion and drop-off rates
 - Weekly retention cohort heatmap
 - Channel performance, CAC, revenue, ROI, and quality scoring
-- Rule-based churn risk scoring with suggested actions
+- ML-powered churn risk scoring (Logistic Regression) with rule-based fallback and suggested actions
 - Weekly risks, opportunities, and experiment recommendations
 - Experiment Tracker with create, edit, status updates, soft cancel, and win-rate stats
 - Full CRUD experiment API
@@ -49,7 +49,7 @@ into a focused operating view for a startup team.
 | Frontend | Next.js, TypeScript, Tailwind CSS, Recharts, Framer Motion, lucide-react |
 | Backend | FastAPI, SQLAlchemy, PostgreSQL, Pydantic |
 | Data | Python seed generator, PostgreSQL, generated CSV and SQL seed data |
-| ML / Future | Scikit-learn planned for the later churn-model phase |
+| ML | scikit-learn (Random Forest + Logistic Regression), pandas, joblib |
 
 ## Architecture
 
@@ -99,7 +99,7 @@ weakest retention.
 | GET | `/api/funnel` | Funnel conversion and drop-off metrics |
 | GET | `/api/retention` | Weekly retention cohorts |
 | GET | `/api/channels/performance` | Channel quality and economics |
-| GET | `/api/churn-risk` | Rule-based user churn-risk ranking |
+| GET | `/api/churn-risk` | ML-powered churn-risk ranking (falls back to rule-based if model missing) |
 | GET | `/api/insights/weekly-summary` | Risks, opportunities, and experiment ideas |
 
 FastAPI's interactive documentation is available locally at
@@ -165,6 +165,46 @@ Start FastAPI:
 python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
+### 2b. Train the Churn Model (optional but recommended)
+
+The churn risk endpoint uses a trained Logistic Regression classifier when model artifacts
+are present. Without them it falls back to rule-based scoring automatically.
+
+From `backend/`:
+
+```powershell
+python ml/train_churn_model.py
+```
+
+This generates four files in `backend/ml/`:
+
+| File | Contents |
+|---|---|
+| `model.pkl` | Trained Logistic Regression classifier |
+| `scaler.pkl` | StandardScaler fitted on training data |
+| `feature_columns.json` | Ordered list of the 14 feature names |
+| `model_metadata.json` | Metrics, feature importances, class distribution |
+
+**`/api/churn-risk` behaviour:**
+
+- If the model, scaler, and feature-column artifacts exist, the endpoint uses the ML model and returns `"model_version": "ml_v1"`.
+- If a required prediction artifact is missing or loading fails, it falls back to rule-based scoring and returns `"model_version": "rule_based"`.
+- The frontend is unaffected by which mode is active.
+
+**Features used by the model:** days since signup, days since last meaningful activity,
+total sessions, total events, meaningful event count, onboarding/registration/invite/
+payment flags, acquisition channel, plan type, events in last 7 and 14 days, and
+signup cohort week.
+
+**Churn definition:** a user is labelled churned if they have had no meaningful activity
+(`user_returned`, `event_viewed`, `event_registered`, `search_performed`, `invite_sent`,
+`payment_completed`) for 14 or more days before the latest event date in the dataset.
+
+The model is trained on deterministic simulated data and intentionally uses recency
+features that closely overlap with this label. Logistic Regression is served instead
+of the benchmark Random Forest because it produces smoother, more useful risk
+probabilities while retaining strong evaluation metrics.
+
 ### 3. Frontend
 
 Open a second PowerShell terminal:
@@ -226,11 +266,11 @@ Open <http://localhost:3000>. The root route redirects to the dashboard.
 - FastAPI analytics backend complete
 - Next.js dashboard frontend complete
 - Experiment Tracker and full CRUD experiment API complete
+- ML churn model (Logistic Regression) with shared feature pipeline and rule-based fallback
 - Local end-to-end development workflow working
 
 ### Next
 
-- Scikit-learn churn model
 - Production deployment
 - Public demo video
 - Portfolio case study

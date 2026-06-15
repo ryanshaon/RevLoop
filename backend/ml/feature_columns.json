@@ -1,0 +1,16 @@
+[
+  "days_since_signup",
+  "days_since_last_active",
+  "total_sessions",
+  "total_events",
+  "meaningful_events_count",
+  "completed_onboarding",
+  "registered_event",
+  "invited_friend",
+  "made_payment",
+  "acquisition_channel_encoded",
+  "plan_type_encoded",
+  "events_last_7_days",
+  "events_last_14_days",
+  "week_of_signup"
+]

@@ -1,0 +1,73 @@
+{
+  "model_name": "LogisticRegression",
+  "model_version": "ml_v1",
+  "trained_at": "2026-06-15T20:35:16.102921+00:00",
+  "dataset_size": 800,
+  "data_source": "Deterministic simulated Campus Connect Demo data",
+  "label_definition": "churn = 1 when days_since_last_active >= 14, measured against the latest event date in the organization dataset",
+  "class_distribution": {
+    "churned": 459,
+    "not_churned": 341
+  },
+  "logistic_regression_metrics": {
+    "accuracy": 0.9812,
+    "precision": 0.989,
+    "recall": 0.9783,
+    "f1": 0.9836,
+    "roc_auc": 0.9997,
+    "brier_score": 0.0113,
+    "log_loss": 0.0474
+  },
+  "random_forest_metrics": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "roc_auc": 1.0,
+    "brier_score": 0.0002,
+    "log_loss": 0.0038
+  },
+  "selected_model_metrics": {
+    "accuracy": 0.9812,
+    "precision": 0.989,
+    "recall": 0.9783,
+    "f1": 0.9836,
+    "roc_auc": 0.9997,
+    "brier_score": 0.0113,
+    "log_loss": 0.0474
+  },
+  "selected_model_reason": "Logistic Regression is served because it preserves excellent ranking performance while producing smoother risk probabilities than the near-binary Random Forest probabilities on this deterministic dataset.",
+  "logistic_regression_coefficients": {
+    "days_since_signup": 1.2363229186793754,
+    "days_since_last_active": 3.9502800267440215,
+    "total_sessions": 1.3753696950286027,
+    "total_events": -1.3355865451138955,
+    "meaningful_events_count": -1.9897189369323904,
+    "completed_onboarding": 0.31655572098336215,
+    "registered_event": 0.31655572098336215,
+    "invited_friend": 0.09867986428466499,
+    "made_payment": -0.1856351592409213,
+    "acquisition_channel_encoded": -0.13430725974901433,
+    "plan_type_encoded": -0.1856351592409213,
+    "events_last_7_days": -0.30186926351812243,
+    "events_last_14_days": -2.563469314496465,
+    "week_of_signup": -0.7318663491559325
+  },
+  "random_forest_feature_importances": {
+    "days_since_signup": 0.1231314089917895,
+    "days_since_last_active": 0.3779548628192377,
+    "total_sessions": 0.08148200478536809,
+    "total_events": 0.057031149810699455,
+    "meaningful_events_count": 0.049235521911480305,
+    "completed_onboarding": 0.000999557809559012,
+    "registered_event": 0.003189611438538719,
+    "invited_friend": 0.0003233527613695558,
+    "made_payment": 0.0011010480924279987,
+    "acquisition_channel_encoded": 0.00082244185264971,
+    "plan_type_encoded": 0.0033272700482779886,
+    "events_last_7_days": 0.08168513561401669,
+    "events_last_14_days": 0.15896886894290874,
+    "week_of_signup": 0.0607477651216766
+  },
+  "limitations": "This is a recency-based churn model trained on simulated data. days_since_last_active intentionally overlaps strongly with the label, and recent-activity count features are also highly predictive. Metrics should not be treated as production generalization evidence."
+}
