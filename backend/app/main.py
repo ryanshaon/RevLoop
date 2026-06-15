@@ -8,7 +8,15 @@ from sqlalchemy.exc import SQLAlchemyError
 from starlette.requests import Request
 
 from app.database import SessionLocal
-from app.routes import channels, churn, dashboard, funnel, insights, retention
+from app.routes import (
+    channels,
+    churn,
+    dashboard,
+    experiments,
+    funnel,
+    insights,
+    retention,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +31,7 @@ app.add_middleware(
 )
 
 app.include_router(dashboard.router, prefix="/api")
+app.include_router(experiments.router, prefix="/api")
 app.include_router(funnel.router, prefix="/api")
 app.include_router(retention.router, prefix="/api")
 app.include_router(channels.router, prefix="/api")

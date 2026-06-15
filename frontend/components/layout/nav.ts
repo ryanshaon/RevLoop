@@ -1,5 +1,6 @@
 import {
   AlertTriangle,
+  FlaskConical,
   Layers,
   LayoutDashboard,
   type LucideIcon,
@@ -20,6 +21,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/retention", label: "Retention", icon: RefreshCw },
   { href: "/channels", label: "Channels", icon: Layers },
   { href: "/churn", label: "Churn Risk", icon: AlertTriangle },
+  { href: "/experiments", label: "Experiments", icon: FlaskConical },
   { href: "/insights", label: "Insights", icon: Sparkles },
 ];
 

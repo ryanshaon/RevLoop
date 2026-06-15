@@ -71,7 +71,7 @@ export function Sidebar() {
       </aside>
 
       <nav
-        className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-6 rounded-2xl border border-[#1c2035] bg-[#070a14]/95 p-1.5 shadow-[0_0_32px_rgba(0,0,0,0.45)] backdrop-blur-xl md:hidden"
+        className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-7 rounded-2xl border border-[#1c2035] bg-[#070a14]/95 p-1.5 shadow-[0_0_32px_rgba(0,0,0,0.45)] backdrop-blur-xl md:hidden"
         aria-label="Mobile navigation"
       >
         {NAV_ITEMS.map((item) => {

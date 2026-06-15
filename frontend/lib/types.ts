@@ -86,6 +86,57 @@ export interface ChurnResponse {
   users: ChurnUser[];
 }
 
+// GET /api/experiments/stats
+export interface ExperimentStats {
+  total: number;
+  planned: number;
+  running: number;
+  completed: number;
+  cancelled: number;
+  win_rate: number; // 0..1
+}
+
+// GET /api/experiments, POST /api/experiments, PATCH /api/experiments/:id, DELETE /api/experiments/:id
+export type ExperimentStatus = "planned" | "running" | "completed" | "cancelled";
+
+export interface Experiment {
+  id: number;
+  org_id: number;
+  experiment_name: string;
+  hypothesis: string;
+  target_metric: string;
+  status: ExperimentStatus;
+  start_date: string | null;
+  end_date: string | null;
+  result_summary: string | null;
+  created_at: string;
+}
+
+export interface ExperimentsResponse {
+  experiments: Experiment[];
+}
+
+export interface ExperimentCreate {
+  org_id?: number;
+  experiment_name: string;
+  hypothesis: string;
+  target_metric: string;
+  status: ExperimentStatus;
+  start_date?: string | null;
+  end_date?: string | null;
+  result_summary?: string | null;
+}
+
+export interface ExperimentUpdate {
+  experiment_name?: string;
+  hypothesis?: string;
+  target_metric?: string;
+  status?: ExperimentStatus;
+  start_date?: string | null;
+  end_date?: string | null;
+  result_summary?: string | null;
+}
+
 // GET /api/insights/weekly-summary
 export interface InsightsSummary {
   summary: string;
