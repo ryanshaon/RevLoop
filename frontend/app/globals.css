@@ -26,7 +26,7 @@ body {
   color: #eef2ff;
 }
 
-/* Custom scrollbar — keeps the mission-control aesthetic on overflow */
+/* Custom scrollbar - keeps the mission-control aesthetic on overflow */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -49,7 +49,7 @@ body {
   scrollbar-color: #1c2035 transparent;
 }
 
-/* Signature page bloom — faint indigo glow at the top of the layout */
+/* Signature page bloom - faint indigo glow at the top of the layout */
 .page-bloom {
   background: radial-gradient(
     ellipse 80% 50% at 50% -10%,
