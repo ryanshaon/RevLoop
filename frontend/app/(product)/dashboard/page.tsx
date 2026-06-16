@@ -28,7 +28,6 @@ import {
   getInsightsSummary,
   getRetention,
 } from "@/lib/api";
-import type { FunnelStep } from "@/lib/types";
 import {
   formatNumber,
   formatPercent,
@@ -105,12 +104,27 @@ export default function DashboardPage() {
     })),
   ].slice(0, 3);
 
-  // Critical alert: worst funnel step (largest drop-off after step 1).
-  const worstStep = funnel.steps.slice(1).reduce<FunnelStep | undefined>(
-    (worst, step) =>
-      !worst || step.drop_off_rate > worst.drop_off_rate ? step : worst,
-    undefined,
+  // Critical alert: worst funnel transition (largest drop-off after step 1).
+  const worstIdx = funnel.steps.slice(1).reduce<number>(
+    (wIdx, _, i) => {
+      const actualIdx = i + 1;
+      return funnel.steps[actualIdx].drop_off_rate >
+        funnel.steps[wIdx].drop_off_rate
+        ? actualIdx
+        : wIdx;
+    },
+    1,
   );
+  const worstStep = funnel.steps.length > 1 ? funnel.steps[worstIdx] : undefined;
+  const prevStep = worstStep ? funnel.steps[worstIdx - 1] : undefined;
+  const transitionLabel =
+    prevStep && worstStep
+      ? `${prevStep.step} -> ${worstStep.step}`
+      : "No funnel transition available";
+  const alertAction =
+    prevStep && worstStep
+      ? `Users fall off hardest at the "${transitionLabel}" transition. Prioritize a focused experiment here to recover lost conversion before scaling spend.`
+      : "Funnel data is not available yet. Once events arrive, this alert will identify the transition with the largest drop-off.";
 
   const growthPositive = summary.weekly_growth_percent >= 0;
 
@@ -256,11 +270,9 @@ export default function DashboardPage() {
         <AlertCard
           label="Critical Alert"
           metricLabel="Biggest funnel drop-off"
-          title={worstStep?.step ?? "—"}
-          metricValue={formatPercent(worstStep?.drop_off_rate ?? 0)}
-          action={`Users fall off hardest at "${
-            worstStep?.step ?? "this step"
-          }". Prioritize a focused experiment here to recover lost conversion before scaling spend.`}
+          title={transitionLabel}
+          metricValue={worstStep ? formatPercent(worstStep.drop_off_rate) : "-"}
+          action={alertAction}
         />
       </Section>
     </PageContainer>

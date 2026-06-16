@@ -4,7 +4,10 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { TopBar } from "@/components/layout/TopBar";
 
 export const metadata: Metadata = {
-  title: "RevLoop - Mission Control",
+  title: {
+    default: "RevLoop - Mission Control",
+    template: "%s | RevLoop",
+  },
   description:
     "ML-assisted revenue and retention cockpit for early-stage startups. See what's broken and what to do next.",
 };

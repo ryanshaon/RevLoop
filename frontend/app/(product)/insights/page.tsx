@@ -64,7 +64,7 @@ export default function InsightsPage() {
       <div className="space-y-6">
         <PageHeading
           kicker="Intelligence"
-          title="AI Insights"
+          title="Insights"
           description="The weekly read on risks to fix, opportunities to press, and experiments to run."
         />
         <InsightsSkeleton />
@@ -81,7 +81,7 @@ export default function InsightsPage() {
       <Section>
         <PageHeading
           kicker="Intelligence"
-          title="AI Insights"
+          title="Insights"
           description="The weekly read on risks to fix, opportunities to press, and experiments to run."
         />
       </Section>
@@ -98,7 +98,7 @@ export default function InsightsPage() {
                   <Sparkles className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <SectionLabel>Weekly AI Summary</SectionLabel>
+                  <SectionLabel>Weekly Summary</SectionLabel>
                   <p className="mt-2 text-[15px] leading-relaxed text-[#c7d0e6]">
                     {data.summary}
                   </p>

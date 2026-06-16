@@ -12,26 +12,26 @@ export function cn(...inputs: ClassValue[]): string {
 
 /** Format a 0..1 fraction as a percentage string, e.g. 0.525 -> "52.5%". */
 export function formatPercent(fraction: number, digits = 1): string {
-  if (!Number.isFinite(fraction)) return "—";
+  if (!Number.isFinite(fraction)) return "-";
   return `${(fraction * 100).toFixed(digits)}%`;
 }
 
 /** Format a value that is already in percentage points, e.g. 26.3 -> "26.3%". */
 export function formatPercentPoints(points: number, digits = 1): string {
-  if (!Number.isFinite(points)) return "—";
+  if (!Number.isFinite(points)) return "-";
   return `${points.toFixed(digits)}%`;
 }
 
 /** Signed percentage points, e.g. 12.3 -> "+12.3%", -21.88 -> "-21.9%". */
 export function formatSignedPercent(points: number, digits = 1): string {
-  if (!Number.isFinite(points)) return "—";
+  if (!Number.isFinite(points)) return "-";
   const sign = points > 0 ? "+" : "";
   return `${sign}${points.toFixed(digits)}%`;
 }
 
 /** Backend currency is USD; retain cents for the small demo values. */
 export function formatCurrency(n: number): string {
-  if (!Number.isFinite(n)) return "—";
+  if (!Number.isFinite(n)) return "-";
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -42,7 +42,7 @@ export function formatCurrency(n: number): string {
 
 /** Compact USD for tight chart axes. */
 export function formatCompactCurrency(n: number): string {
-  if (!Number.isFinite(n)) return "—";
+  if (!Number.isFinite(n)) return "-";
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -53,15 +53,41 @@ export function formatCompactCurrency(n: number): string {
 
 /** Thousands-separated integer, e.g. 20478 -> "20,478". */
 export function formatNumber(n: number): string {
-  if (!Number.isFinite(n)) return "—";
+  if (!Number.isFinite(n)) return "-";
   return new Intl.NumberFormat("en-US").format(Math.round(n));
 }
 
-/** ISO date -> short label, e.g. "2026-03-02" -> "Mar 2". */
+/** Parse date-only or timestamped API values without local-time day shifts. */
+export function parseApiDateUtc(iso: string): Date | null {
+  const value = iso.trim();
+  if (!value) return null;
+  const d = /^\d{4}-\d{2}-\d{2}$/.test(value)
+    ? new Date(`${value}T00:00:00Z`)
+    : new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+/** ISO date -> short label, e.g. "2026-03-02" -> "Mar 2". Always uses UTC. */
 export function formatWeekLabel(iso: string): string {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const d = parseApiDateUtc(iso);
+  if (!d) return iso;
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+/** ISO date -> readable date with year, e.g. "2026-03-02" -> "Mar 2, 2026". */
+export function formatDateLabel(iso: string): string {
+  const d = parseApiDateUtc(iso);
+  if (!d) return iso;
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
 }
 
 /* ------------------------------------------------------------------ */
@@ -121,7 +147,7 @@ export function getRiskMeta(level: string): RiskMeta {
 }
 
 /* ------------------------------------------------------------------ */
-/* Channel colors — consistent hue per acquisition channel             */
+/* Channel colors - consistent hue per acquisition channel             */
 /* ------------------------------------------------------------------ */
 
 const CHANNEL_COLORS: Record<string, string> = {

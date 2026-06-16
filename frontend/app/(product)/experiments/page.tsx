@@ -35,7 +35,7 @@ import type {
   ExperimentStatus,
   ExperimentUpdate,
 } from "@/lib/types";
-import { cn, formatPercent } from "@/lib/utils";
+import { cn, formatDateLabel, formatPercent } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ */
 /* Status helpers                                                       */
@@ -103,14 +103,7 @@ function PriorityDot({ status }: { status: ExperimentStatus }) {
 
 function formatDate(iso: string | null): string {
   if (!iso) return "-";
-  const d = new Date(`${iso}T00:00:00Z`);
-  if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  });
+  return formatDateLabel(iso);
 }
 
 /* ------------------------------------------------------------------ */
@@ -193,39 +186,43 @@ function ExperimentCard({
       {!isCancelled && (
         <div className="mt-4 flex flex-wrap items-center gap-2 opacity-100 transition-opacity duration-150 sm:opacity-0 sm:group-focus-within:opacity-100 sm:group-hover:opacity-100">
           <button
+            type="button"
             onClick={() => onEdit(exp)}
             disabled={isUpdating}
-            className="flex items-center gap-1.5 rounded-lg border border-[#1c2035] bg-[#111527] px-3 py-1.5 text-[11px] font-semibold text-[#8892b0] transition-colors hover:border-[#4f6ef7]/30 hover:text-[#4f6ef7] disabled:opacity-50"
+            className="flex items-center gap-1.5 rounded-lg border border-[#1c2035] bg-[#111527] px-3 py-1.5 text-[11px] font-semibold text-[#8892b0] transition-colors hover:border-[#4f6ef7]/30 hover:text-[#4f6ef7] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4f6ef7]/60 disabled:opacity-50"
           >
-            <Pencil className="h-3 w-3" />
+            <Pencil className="h-3 w-3" aria-hidden />
             Edit
           </button>
           {exp.status === "planned" && (
             <button
+              type="button"
               onClick={() => onMarkRunning(exp)}
               disabled={isUpdating}
-              className="flex items-center gap-1.5 rounded-lg border border-[#4f6ef7]/30 bg-[#4f6ef7]/10 px-3 py-1.5 text-[11px] font-semibold text-[#4f6ef7] transition-colors hover:bg-[#4f6ef7]/20 disabled:opacity-50"
+              className="flex items-center gap-1.5 rounded-lg border border-[#4f6ef7]/30 bg-[#4f6ef7]/10 px-3 py-1.5 text-[11px] font-semibold text-[#4f6ef7] transition-colors hover:bg-[#4f6ef7]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4f6ef7]/60 disabled:opacity-50"
             >
-              <Play className="h-3 w-3" />
+              <Play className="h-3 w-3" aria-hidden />
               Mark Running
             </button>
           )}
           {exp.status === "running" && (
             <button
+              type="button"
               onClick={() => onMarkComplete(exp)}
               disabled={isUpdating}
-              className="flex items-center gap-1.5 rounded-lg border border-[#10b981]/30 bg-[#10b981]/10 px-3 py-1.5 text-[11px] font-semibold text-[#10b981] transition-colors hover:bg-[#10b981]/20 disabled:opacity-50"
+              className="flex items-center gap-1.5 rounded-lg border border-[#10b981]/30 bg-[#10b981]/10 px-3 py-1.5 text-[11px] font-semibold text-[#10b981] transition-colors hover:bg-[#10b981]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10b981]/60 disabled:opacity-50"
             >
-              <CheckCircle2 className="h-3 w-3" />
+              <CheckCircle2 className="h-3 w-3" aria-hidden />
               Mark Complete
             </button>
           )}
           <button
+            type="button"
             onClick={() => onCancel(exp)}
             disabled={isUpdating}
-            className="flex items-center gap-1.5 rounded-lg border border-[#f43f5e]/20 bg-[#f43f5e]/6 px-3 py-1.5 text-[11px] font-semibold text-[#f43f5e]/80 transition-colors hover:bg-[#f43f5e]/15 disabled:opacity-50"
+            className="flex items-center gap-1.5 rounded-lg border border-[#f43f5e]/20 bg-[#f43f5e]/6 px-3 py-1.5 text-[11px] font-semibold text-[#f43f5e]/80 transition-colors hover:bg-[#f43f5e]/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f43f5e]/60 disabled:opacity-50"
           >
-            <XCircle className="h-3 w-3" />
+            <XCircle className="h-3 w-3" aria-hidden />
             Cancel
           </button>
         </div>
@@ -319,7 +316,7 @@ function ExperimentModal({ initial, onClose, onSave }: ModalProps) {
         className="fixed inset-0 z-50 flex items-center justify-center p-4"
         style={{ background: "rgba(5,7,15,0.75)", backdropFilter: "blur(8px)" }}
         onClick={(e) => {
-          if (e.target === backdropRef.current) onClose();
+          if (e.target === backdropRef.current && !submitting) onClose();
         }}
       >
         <motion.div
@@ -336,7 +333,7 @@ function ExperimentModal({ initial, onClose, onSave }: ModalProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#4f6ef7]/30 bg-[#4f6ef7]/12">
-                <FlaskConical className="h-4 w-4 text-[#4f6ef7]" />
+                <FlaskConical className="h-4 w-4 text-[#4f6ef7]" aria-hidden />
               </div>
               <h2
                 id="experiment-modal-title"
@@ -348,20 +345,22 @@ function ExperimentModal({ initial, onClose, onSave }: ModalProps) {
             <button
               type="button"
               onClick={onClose}
+              disabled={submitting}
               aria-label="Close experiment dialog"
-              className="rounded-lg p-1.5 text-[#4a5278] transition-colors hover:bg-[#1c2035] hover:text-[#eef2ff]"
+              className="rounded-lg p-1.5 text-[#4a5278] transition-colors hover:bg-[#1c2035] hover:text-[#eef2ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4f6ef7]/60 disabled:opacity-50"
             >
-              <X className="h-4 w-4" />
+              <X className="h-4 w-4" aria-hidden />
             </button>
           </div>
 
           <form onSubmit={handleSubmit} className="mt-5 space-y-4">
             {/* Experiment name */}
             <div>
-              <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.15em] text-[#4a5278]">
+              <label htmlFor="exp-name" className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.15em] text-[#4a5278]">
                 Experiment Name *
               </label>
               <input
+                id="exp-name"
                 type="text"
                 value={form.experiment_name}
                 onChange={(e) => set("experiment_name", e.target.value)}
@@ -372,10 +371,11 @@ function ExperimentModal({ initial, onClose, onSave }: ModalProps) {
 
             {/* Hypothesis */}
             <div>
-              <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.15em] text-[#4a5278]">
+              <label htmlFor="exp-hypothesis" className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.15em] text-[#4a5278]">
                 Hypothesis *
               </label>
               <textarea
+                id="exp-hypothesis"
                 rows={3}
                 value={form.hypothesis}
                 onChange={(e) => set("hypothesis", e.target.value)}
@@ -386,10 +386,11 @@ function ExperimentModal({ initial, onClose, onSave }: ModalProps) {
 
             {/* Target metric */}
             <div>
-              <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.15em] text-[#4a5278]">
+              <label htmlFor="exp-metric" className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.15em] text-[#4a5278]">
                 Target Metric *
               </label>
               <input
+                id="exp-metric"
                 type="text"
                 value={form.target_metric}
                 onChange={(e) => set("target_metric", e.target.value)}
@@ -400,10 +401,11 @@ function ExperimentModal({ initial, onClose, onSave }: ModalProps) {
 
             {/* Status */}
             <div>
-              <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.15em] text-[#4a5278]">
+              <label htmlFor="exp-status" className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.15em] text-[#4a5278]">
                 Status
               </label>
               <select
+                id="exp-status"
                 value={form.status}
                 onChange={(e) => set("status", e.target.value as ExperimentStatus)}
                 className="w-full rounded-xl border border-[#1c2035] bg-[#0c0f1d] px-3.5 py-2.5 text-[13px] text-[#eef2ff] outline-none transition-colors focus:border-[#4f6ef7]/50 focus:ring-1 focus:ring-[#4f6ef7]/20"
@@ -418,10 +420,11 @@ function ExperimentModal({ initial, onClose, onSave }: ModalProps) {
             {/* Dates */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.15em] text-[#4a5278]">
+                <label htmlFor="exp-start" className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.15em] text-[#4a5278]">
                   Start Date
                 </label>
                 <input
+                  id="exp-start"
                   type="date"
                   value={form.start_date ?? ""}
                   onChange={(e) => set("start_date", e.target.value || null)}
@@ -429,10 +432,11 @@ function ExperimentModal({ initial, onClose, onSave }: ModalProps) {
                 />
               </div>
               <div>
-                <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.15em] text-[#4a5278]">
+                <label htmlFor="exp-end" className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.15em] text-[#4a5278]">
                   End Date
                 </label>
                 <input
+                  id="exp-end"
                   type="date"
                   value={form.end_date ?? ""}
                   onChange={(e) => set("end_date", e.target.value || null)}
@@ -443,13 +447,14 @@ function ExperimentModal({ initial, onClose, onSave }: ModalProps) {
 
             {/* Result summary is always visible and highlighted when completed. */}
             <div>
-              <label className={cn(
+              <label htmlFor="exp-result" className={cn(
                 "mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.15em]",
                 form.status === "completed" ? "text-[#10b981]" : "text-[#4a5278]",
               )}>
                 Result Summary{form.status === "completed" ? " (recommended)" : " (optional)"}
               </label>
               <textarea
+                id="exp-result"
                 rows={form.status === "completed" ? 3 : 2}
                 value={form.result_summary ?? ""}
                 onChange={(e) => set("result_summary", e.target.value || null)}
@@ -468,7 +473,10 @@ function ExperimentModal({ initial, onClose, onSave }: ModalProps) {
             </div>
 
             {error && (
-              <p className="rounded-xl border border-[#f43f5e]/30 bg-[#f43f5e]/8 px-3.5 py-2.5 text-[13px] text-[#f43f5e]">
+              <p
+                role="alert"
+                className="rounded-xl border border-[#f43f5e]/30 bg-[#f43f5e]/8 px-3.5 py-2.5 text-[13px] text-[#f43f5e]"
+              >
                 {error}
               </p>
             )}
@@ -477,16 +485,20 @@ function ExperimentModal({ initial, onClose, onSave }: ModalProps) {
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-xl border border-[#1c2035] px-4 py-2 text-[13px] font-semibold text-[#8892b0] transition-colors hover:bg-[#1c2035] hover:text-[#eef2ff]"
+                disabled={submitting}
+                className="rounded-xl border border-[#1c2035] px-4 py-2 text-[13px] font-semibold text-[#8892b0] transition-colors hover:bg-[#1c2035] hover:text-[#eef2ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4f6ef7]/60 disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex items-center gap-2 rounded-xl bg-[#4f6ef7] px-5 py-2 text-[13px] font-semibold text-white shadow-[0_0_18px_rgba(79,110,247,0.35)] transition-all hover:bg-[#6b8aff] hover:shadow-[0_0_24px_rgba(79,110,247,0.45)] disabled:opacity-60"
+                aria-busy={submitting}
+                className="flex items-center gap-2 rounded-xl bg-[#4f6ef7] px-5 py-2 text-[13px] font-semibold text-white shadow-[0_0_18px_rgba(79,110,247,0.35)] transition-all hover:bg-[#6b8aff] hover:shadow-[0_0_24px_rgba(79,110,247,0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4f6ef7]/60 disabled:opacity-60"
               >
-                {submitting && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                {submitting && (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
+                )}
                 {isEdit ? "Save Changes" : "Create Experiment"}
               </button>
             </div>
@@ -738,13 +750,19 @@ export default function ExperimentsPage() {
         {/* Filter bar + new button */}
         <Section>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex flex-wrap items-center gap-2">
+            <div
+              className="flex flex-wrap items-center gap-2"
+              role="group"
+              aria-label="Experiment status filters"
+            >
               {FILTER_OPTIONS.map((opt) => (
                 <button
+                  type="button"
                   key={opt.value}
                   onClick={() => setFilter(opt.value)}
+                  aria-pressed={filter === opt.value}
                   className={cn(
-                    "rounded-full border px-4 py-1.5 text-[12px] font-semibold transition-all",
+                    "rounded-full border px-4 py-1.5 text-[12px] font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4f6ef7]/60",
                     filter === opt.value
                       ? "border-[#4f6ef7]/50 bg-[#4f6ef7]/15 text-[#4f6ef7] shadow-[0_0_12px_rgba(79,110,247,0.20)]"
                       : "border-[#1c2035] bg-[#0c0f1d] text-[#8892b0] hover:border-[#4f6ef7]/20 hover:text-[#eef2ff]",
@@ -760,15 +778,19 @@ export default function ExperimentsPage() {
               ))}
             </div>
             <button
+              type="button"
               onClick={openCreate}
-              className="flex items-center gap-2 rounded-xl bg-[#4f6ef7] px-4 py-2 text-[13px] font-semibold text-white shadow-[0_0_18px_rgba(79,110,247,0.30)] transition-all hover:bg-[#6b8aff] hover:shadow-[0_0_24px_rgba(79,110,247,0.45)]"
+              className="flex items-center gap-2 rounded-xl bg-[#4f6ef7] px-4 py-2 text-[13px] font-semibold text-white shadow-[0_0_18px_rgba(79,110,247,0.30)] transition-all hover:bg-[#6b8aff] hover:shadow-[0_0_24px_rgba(79,110,247,0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4f6ef7]/60"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4" aria-hidden />
               New Experiment
             </button>
           </div>
           {actionError && (
-            <p className="mt-3 rounded-xl border border-[#f43f5e]/30 bg-[#f43f5e]/8 px-3.5 py-2.5 text-[13px] text-[#f43f5e]">
+            <p
+              role="alert"
+              className="mt-3 rounded-xl border border-[#f43f5e]/30 bg-[#f43f5e]/8 px-3.5 py-2.5 text-[13px] text-[#f43f5e]"
+            >
               {actionError}
             </p>
           )}
@@ -788,10 +810,11 @@ export default function ExperimentsPage() {
                   : `No ${filter} experiments. Switch filters or create a new one.`}
               </p>
               <button
+                type="button"
                 onClick={openCreate}
-                className="mt-2 flex items-center gap-2 rounded-xl bg-[#4f6ef7] px-4 py-2 text-[13px] font-semibold text-white"
+                className="mt-2 flex items-center gap-2 rounded-xl bg-[#4f6ef7] px-4 py-2 text-[13px] font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4f6ef7]/60"
               >
-                <Plus className="h-4 w-4" />
+                <Plus className="h-4 w-4" aria-hidden />
                 New Experiment
               </button>
             </GlassCard>
