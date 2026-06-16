@@ -1,5 +1,7 @@
 # RevLoop
 
+**[Live Demo](https://rev-loop.vercel.app)** | **[Backend API](https://revloop.onrender.com)** | **[GitHub](https://github.com/ryanshaon/RevLoop)**
+
 **AI-powered product analytics cockpit for early-stage startups.**
 
 RevLoop turns product event data into practical answers for founders, product
@@ -263,15 +265,14 @@ Open <http://localhost:3000>. The root route redirects to the dashboard.
 ### Current
 
 - PostgreSQL schema and realistic seed dataset complete
-- FastAPI analytics backend complete
-- Next.js dashboard frontend complete
+- FastAPI analytics backend complete — live at [revloop.onrender.com](https://revloop.onrender.com)
+- Next.js dashboard frontend complete — live at [rev-loop.vercel.app](https://rev-loop.vercel.app)
 - Experiment Tracker and full CRUD experiment API complete
 - ML churn model (Logistic Regression) with shared feature pipeline and rule-based fallback
-- Local end-to-end development workflow working
+- Production deployed (Vercel + Render)
 
 ### Next
 
-- Production deployment
 - Public demo video
 - Portfolio case study
 
