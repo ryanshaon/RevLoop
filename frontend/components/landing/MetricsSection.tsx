@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useInView, useReducedMotion } from "framer-motion";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatedNumber } from "@/components/common/AnimatedNumber";
 import { cn } from "@/lib/utils";
 
@@ -17,14 +17,14 @@ const METRICS: MetricDef[] = [
   {
     value: 800,
     label: "Users tracked",
-    format: (n) => Math.round(n).toLocaleString(),
+    format: (n) => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
     color: "text-[#4f6ef7]",
     glowColor: "rgba(79,110,247,0.15)",
   },
   {
     value: 20478,
     label: "Events analyzed",
-    format: (n) => Math.round(n).toLocaleString(),
+    format: (n) => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
     color: "text-[#a78bfa]",
     glowColor: "rgba(167,139,250,0.15)",
   },
@@ -45,7 +45,7 @@ const METRICS: MetricDef[] = [
   {
     value: 449,
     label: "High-risk users identified",
-    format: (n) => Math.round(n).toLocaleString(),
+    format: (n) => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
     color: "text-[#f43f5e]",
     glowColor: "rgba(244,63,94,0.15)",
   },
@@ -71,13 +71,13 @@ function MetricCard({
 }) {
   return (
     <motion.div
-      initial={shouldReduce ? undefined : { opacity: 0, y: 20 }}
+      initial={shouldReduce ? undefined : { opacity: 1, y: 20 }}
       animate={
         shouldReduce
           ? undefined
           : active
             ? { opacity: 1, y: 0 }
-            : { opacity: 0, y: 20 }
+            : { opacity: 1, y: 20 }
       }
       transition={
         shouldReduce
@@ -108,7 +108,12 @@ function MetricCard({
 export function MetricsSection() {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
-  const shouldReduce = useReducedMotion();
+  const mediaReducedMotion = useReducedMotion();
+  const [shouldReduce, setShouldReduce] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    setShouldReduce(mediaReducedMotion);
+  }, [mediaReducedMotion]);
 
   return (
     <section
@@ -117,7 +122,7 @@ export function MetricsSection() {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
-          initial={shouldReduce ? undefined : { opacity: 0, y: 20 }}
+          initial={shouldReduce ? undefined : { opacity: 1, y: 20 }}
           whileInView={shouldReduce ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}

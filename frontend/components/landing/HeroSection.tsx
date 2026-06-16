@@ -8,8 +8,8 @@ import { ArrowRight, ChevronRight } from "lucide-react";
 function useFadeUp(delay: number) {
   const shouldReduce = useReducedMotion();
   return {
-    initial: shouldReduce ? undefined : { opacity: 0, y: 24 },
-    animate: shouldReduce ? undefined : { opacity: 1, y: 0 },
+    initial: shouldReduce ? undefined : { y: 24 },
+    animate: shouldReduce ? undefined : { y: 0 },
     transition: shouldReduce
       ? undefined
       : { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const, delay },
@@ -88,8 +88,8 @@ function DashboardPreview() {
     <motion.div
       id="demo"
       className="relative mx-auto max-w-5xl scroll-mt-20"
-      initial={shouldReduce ? undefined : { opacity: 0, scale: 0.97, y: 32 }}
-      animate={shouldReduce ? undefined : { opacity: 1, scale: 1, y: 0 }}
+      initial={shouldReduce ? undefined : { scale: 0.97, y: 32 }}
+      animate={shouldReduce ? undefined : { scale: 1, y: 0 }}
       transition={
         shouldReduce
           ? undefined

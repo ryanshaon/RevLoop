@@ -69,7 +69,7 @@ export function LandingFooter() {
             </div>
             <p className="text-[10px] text-[#4a5278]">
               Built by Ryan &middot; Portfolio project - not a commercial
-              product &middot; &copy; {new Date().getFullYear()}
+              product &middot; &copy; {2026}
             </p>
           </nav>
         </div>

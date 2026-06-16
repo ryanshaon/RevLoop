@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
-import type { ReactNode } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
+import { useRef, type ReactNode } from "react";
 
 export function Reveal({
   children,
@@ -12,14 +12,22 @@ export function Reveal({
   delay?: number;
   className?: string;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
   const shouldReduce = useReducedMotion();
+  const isInView = useInView(ref, { once: true, margin: "-60px" });
 
   return (
     <motion.div
+      ref={ref}
       className={className}
-      initial={shouldReduce ? false : { opacity: 0, y: 24 }}
-      whileInView={shouldReduce ? undefined : { opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
+      initial={shouldReduce ? false : { opacity: 1, y: 24 }}
+      animate={
+        shouldReduce
+          ? undefined
+          : isInView
+            ? { opacity: 1, y: 0 }
+            : undefined
+      }
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay }}
     >
       {children}

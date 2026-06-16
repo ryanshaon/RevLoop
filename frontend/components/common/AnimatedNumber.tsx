@@ -31,6 +31,7 @@ export function AnimatedNumber({
       duration,
       ease: [0.16, 1, 0.3, 1],
       onUpdate: (v) => setDisplay(v),
+      onComplete: () => setDisplay(value),
     });
     fromRef.current = value;
     return () => controls.stop();
