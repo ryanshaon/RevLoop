@@ -92,6 +92,11 @@ I switched to Logistic Regression, which gives 253 distinct, genuinely calibrate
 Training and serving share one `features.py` module so the exact same feature logic runs at train time and inference time — a common, easy-to-miss source of silent model drift in real systems.
 
 ---
+## Architecture
+
+![RevLoop architecture diagram](screenshots/architecture.png)
+
+Frontend and backend deploy and scale independently. The ML model loads into the FastAPI process at startup. It doesn't live behind its own service. At this scale a network call to a separate model server would add latency for no benefit. The model artifacts are also small enough to ship with the backend.
 
 ## Insights engine
 
